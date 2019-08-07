@@ -23,49 +23,37 @@
 """
 Network Line Graph
 ==================
-
 Visualise a network by assigning nodes a position along the
 x-axis and then drawing the edges between them as Bezier curves.
-
 Such a visualisation is particularly useful to compare two different
 network states, as a second network state can be drawn in the same way
 below the x-axis. The symmetry around the x-axis accentuates changes
 in the network structure.
-
 Example:
 --------
-
 import numpy as np
 import matplotlib.pyplot as plt
 import network_line_graph as nlg
-
 # initialise figure
 fig, ax = plt.subplots(1,1)
-
 # make a weighted random graph
 n = 20 # number of nodes
 p = 0.1 # connection probability
 a1 = np.random.rand(n,n) < p # adjacency matrix
 w1 = np.random.randn(n,n) # weight matrix
 w1[~a1] = np.nan
-
 # plot connections above x-axis
 nlg.draw(w1, arc_above=True, ax=ax)
-
 # make another weighted random graph;
 a2 = np.random.rand(n,n) < p # adjacency matrix
 w2 = np.random.randn(n,n) # weight matrix
 w2[~a2] = np.nan
-
 # plot connections below x-axis
 nlg.draw(w2, arc_above=False, ax=ax)
-
 # annotate
 ax.text(0,1, 'Graph 1', transform=ax.transAxes, fontsize=18)
 ax.text(0,0, 'Graph 2', transform=ax.transAxes, fontsize=18)
-
 plt.show()
-
 """
 
 import numpy as np
@@ -79,40 +67,32 @@ from matplotlib.patches import FancyArrowPatch, Circle
 def draw(adjacency_matrix, node_order=None, node_labels=None, ax=None, **kwargs):
     """
     Convenience function that tries to do "the right thing".
-
     For a full list of available arguments, and
     for finer control of the individual draw elements,
     please refer to the documentation of
-
         draw_nodes()
         draw_edges()
         draw_node_labels()
         draw_edge_labels()
-
     Arguments
     ----------
     adjacency_matrix: (n, n) numpy.ndarray
         Adjacency or weight matrix of the network.
-
     node_order : (n, ) numpy.ndarray
         Order in which the nodes are plotted along the x-axis.
         If unspecified and networkx is installed, the node order is
         set such that nodes, which are strongly connected with each
         other, occur close in the node order.
-
     ax : matplotlib.axis instance or None (default None)
        Axis to plot onto; if none specified, one will be instantiated with plt.gca().
-
     Examples
     --------
-
     See Also
     --------
     draw_nodes()
     draw_edges()
     draw_node_labels()
     draw_edge_labels()
-
     """
 
     if ax is None:
@@ -174,11 +154,11 @@ def draw(adjacency_matrix, node_order=None, node_labels=None, ax=None, **kwargs)
     # remove superfluous ink
     _make_pretty(ax)
 
-    return
+    return 
 
 def _get_positions(node_order):
     n = len(node_order)
-    node_positions = np.array(zip(node_order, np.zeros((n))))
+    node_positions = np.array(list(zip(node_order, np.zeros((n)))))
     return node_positions
 
 def _optimize_node_order(adjacency_matrix):
@@ -229,46 +209,35 @@ def draw_nodes(node_positions,
                **kwds):
     """
     Draw node markers at specified positions.
-
     Arguments
     ----------
     node_positions : (n, 2) numpy.ndarray
         iterable of (x,y) node positions
-
     node_shape : string (default 'full')
        The shape of the node. One of 'full', 'top half', 'bottom half'.
-
     node_size : scalar or (n,) numpy array (default 3.)
        Size (radius) of nodes.
        A node size of 1 corresponds to a length of 0.01 in node position units.
-
     node_edge_width : [scalar | sequence] (default 0.5)
        Line width of node marker border.
-
     node_color : color string, or array of floats (default 'w')
        Node color. Can be a single color format string
        or a sequence of colors with the same length as node_positions.
        If numeric values are specified they will be mapped to
        colors using the cmap and vmin/vmax parameters.
-
     node_edge_color : color string, or array of floats (default 'k')
        Node color. Can be a single color format string,
        or a sequence of colors with the same length as node_positions.
        If numeric values are specified they will be mapped to
        colors using the cmap and vmin,vmax parameters.
-
     cmap : Matplotlib colormap (default None)
        Colormap for mapping intensities of nodes.
-
     vmin, vmax : floats (default None)
        Minimum and maximum for node colormap scaling.
-
     alpha : float (default 1.)
        The node transparency.
-
     ax : Matplotlib Axes object, optional
        Draw the graph in the specified Matplotlib axes.
-
     Returns
     -------
     artists: dict
@@ -276,7 +245,6 @@ def draw_nodes(node_positions,
         where both artists are instances of matplotlib.patches.
         Node face artists are indexed with keys of the format (index, 'face'),
         Node edge artists are indexed with keys (index, 'edge').
-
     """
 
     if ax is None:
@@ -355,48 +323,35 @@ def draw_node_labels(node_positions,
                      **kwargs):
     """
     Draw node labels.
-
     Arguments
     ---------
     node_positions : (n, 2) numpy.ndarray
         (x, y) node coordinates.
-
     node_labels : dict
        Dictionary mapping node indices to labels.
        Only nodes in the dictionary are labelled.
-
     font_size : int (default 12)
        Font size for text labels
-
     font_color : string (default 'k')
        Font color string
-
     font_family : string (default='sans-serif')
        Font family
-
     font_weight : string (default='normal')
        Font weight
-
     font_alpha : float (default 1.)
        Text transparency
-
     bbox : Matplotlib bbox
        Specify text box shape and colors.
-
     clip_on : bool
        Turn on clipping at axis boundaries (default=False)
-
     ax : matplotlib.axis instance or None (default None)
        Draw the graph in the specified Matplotlib axis.
-
     Returns
     -------
     artists: dict
         Dictionary mapping node indices to text objects.
-
     @reference
     Borrowed with minor modifications from networkx/drawing/nx_pylab.py
-
     """
 
     if ax is None:
@@ -440,25 +395,19 @@ def draw_edges(adjacency_matrix,
                draw_arrows=True,
                **arrow_kwargs):
     """
-
     Draw the edges of the network.
-
     Arguments
     ----------
     adjacency_matrix: (n, n) numpy.ndarray
         Adjacency or weight matrix of the network.
-
     node_positions : (n, 2) numpy.ndarray
         (x, y) node coordinates
-
     node_artists: dictionary
         Container of node_artists as returned by draw_nodes() or None (default None).
         If node artists are provided, edges start and end at the edge of the node artist,
         not at the node positions (i.e. their centre).
-
     edge_width : float, or (n, n) numpy.ndarray (default 2.)
         Line width of edges.
-
     edge_color : color string, or (n, n) numpy.ndarray or (n, n, 4) numpy.ndarray (default: 'k')
         Edge color. Can be a single color format string, or
         a numeric array with the first two dimensions matching the adjacency matrix.
@@ -466,34 +415,26 @@ def draw_edges(adjacency_matrix,
         colors using the edge_cmap and edge_vmin,edge_vmax parameters.
         If a (n, n, 4) numpy.ndarray is passed in, the last dimension is
         interpreted as an RGBA tuple, that requires no further parsing.
-
     edge_cmap : Matplotlib colormap or None (default None)
         Colormap for mapping intensities of edges.
         Ignored if edge_color is a string or a (n, n, 4) numpy.ndarray.
-
     edge_vmin, edge_vmax : float, float (default None, None)
         Minimum and maximum for edge colormap scaling.
         Ignored if edge_color is a string or a (n, n, 4) numpy.ndarray.
-
     edge_alpha : float (default 1.)
         The edge transparency,
         Ignored if edge_color is a (n, n, 4) numpy.ndarray.
-
     ax : matplotlib.axis instance or None (default None)
         Draw the graph in the specified Matplotlib axis.
-
     arc_above: bool, optional (default True)
         If True, draw edges arcing above x-axis.
-
     draw_arrows : bool, optional (default True)
         If True, draw edges with arrow heads.
-
     Returns
     -------
     artists: dict
         Dictionary mapping edges to matplotlib.patches.FancyArrow artists.
         The dictionary keys are of the format: (source index, target index).
-
     """
 
     if not ax:
@@ -525,7 +466,7 @@ def draw_edges(adjacency_matrix,
         edge_color = edge_color.reshape([number_of_nodes, number_of_nodes, 4])
 
     sources, targets = np.where(~np.isnan(adjacency_matrix))
-    edge_list = zip(sources.tolist(), targets.tolist())
+    edge_list = list(zip(sources.tolist(), targets.tolist()))
 
     # order if necessary
     if edge_zorder is None:
@@ -551,7 +492,7 @@ def draw_edges(adjacency_matrix,
 
 def _adjacency_to_list(adjacency_matrix):
     sources, targets = np.where(~np.isnan(adjacency_matrix))
-    edge_list = zip(sources.tolist(), targets.tolist())
+    edge_list = list(zip(sources.tolist(), targets.tolist()))
     return edge_list
 
 def _add_edge(source, target,
@@ -644,31 +585,24 @@ def _parse_color_input(number_of_elements, color_spec,
     """
     Handle the mess that is matplotlib color specifications.
     Return an RGBA array with specified number of elements.
-
     Arguments
     ---------
     number_of_elements: int
         Number (n) of elements to get a color for.
-
     color_spec : color string, list of strings, a float, or a numpy.ndarray of floats
         Any valid matplotlib color specification.
         If numeric values are specified, they will be mapped to colors using the
         cmap and vmin/vmax arguments.
-
     cmap : matplotlib colormap (default None)
         Color map to use if color_spec is not a string.
-
     vmin, vmax : float, float (default None, None)
         Minimum and maximum values for normalizing colors if a color mapping is used.
-
     alpha : float or n-long iterable of floats (default 1.)
         Alpha values to go with the colors.
-
     Returns
     -------
     rgba_array : (n, 4) numpy ndarray
         Array of RGBA color specifications.
-
     """
     # map color_spec to either a list of strings or
     # an iterable of floats of the correct length,
